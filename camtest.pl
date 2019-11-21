@@ -7,7 +7,7 @@ use File::Copy;
 
 # misc variables
 my $interval = 60;
-my $continuous = 1;
+my $continuous = 0;
 my $debug = 1;
 my $date = strftime "%Y-%m-%d", localtime;
 my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
@@ -22,7 +22,6 @@ my $dir = $date;
 my $ftp = 1;
 my $host = "52.36.136.128";
 my $pwfile = 'passw.txt';  #password file should have CamID on 1st line, key on 2nd line
-my $credentials;
 
 # fswebcam options
 my $options = '-q --top-banner -r 640x480';
@@ -34,12 +33,18 @@ my $image = "$webhome/webcam/image.jpg";
 my $capture = "fswebcam $options $controls $title $subtitle $info $image";
 
 # start to do stuff
-# read password file 
-open (CREDENTIALS, $pwfile) or die "Can't open file $pwfile";
-$credentials = <CREDENTIALS>;
-chomp($credentials);
-if ($debug) {print "My creds:$credentials"};
-
+# read password file into array
+open(FILE, $pwfile) or die("Unable to open $pwfile file");
+chomp (my @credentials = <FILE>);
+close(FILE);
+my $user = "$credentials[0]";
+my $pass = "$credentials[1]";
+if ($debug) {
+    print "$user\n";
+    print "$pass\n";
+    print "$user-is the username\n";
+    print "$pass-is the password\n";
+}
 
 # the real work starts here.  Loop every minute to capture image
 while ($continuous == 1) {
@@ -71,15 +76,14 @@ while ($continuous == 1) {
     # ftp my image to WU
     if ($ftp) {
         if ($debug) {print "Start FTP \n"};
-        if ($debug) {"Connect attempt\n"}; 
-        my $f = Net::FTP->new($host) or die "Can't open $host \n";
-        if ($debug) {print "Login attempt\n"};       
-        $f->login($credentials) or die "Can't login as $credentials RC: $f\n";
-        if ($debug) {print $f,"Switching to binary"};
-        $f->binary() or die "Can't switch to finary RC: $f\n";
-        if ($debug) {print "Putting file\n"};
-        $f->put($image) or die "Cant put file RC: $f\n";
-        
+        my $f = Net::FTP->new($host) or die "Can't open $host\n";
+        if ($debug) {print $f,"Connect\n"}; 
+        $f->login($user, $pass) ;
+        if ($debug) {print $f,"Login\n"};
+        $f->binary();
+        if ($debug) {print $f,"Binary\n"};
+        $f->put($image); #or die "Cant put file\n";
+        if ($debug) {print $f,"Put\n"};
     }
 
     # sleep until next capture
