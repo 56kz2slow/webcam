@@ -24,7 +24,7 @@ my $capture = "fswebcam -q --top-banner $controls $title $subtitle $info $resolu
 
 # other variables
 my $interval = 60;
-my $continuous = 1;
+my $continuous = 0;
 my $debug = 1;
 my $archive = '/var/www/html/webcamarchive';
 my $date = strftime "%Y-%m-%d", localtime;
@@ -46,39 +46,44 @@ if ($debug) {
 }
 
 # the real work starts here.  Loop every minute to capture image
-while ($continuous = 1) {
+while ($continuous == 1) {
 
 
-# capture image using fswebcam
-if ($debug == 1) {print $capture,"\n"};
-system("$capture");
+    # capture image using fswebcam
+    if ($debug == 1) {print $capture,"\n"};
+    system("$capture");
 
-sleep(5);
+    sleep(5);
 
-# archive files
-my $date = strftime "%Y-%m-%d", localtime;
-my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+    # archive files
+    my $date = strftime "%Y-%m-%d", localtime;
+    my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+    chdir ($archive);
+    
 
-chdir ($archive);
-unless (-d $date) {
-mkdir ($date) or die "can't create directory";
-}
-copy("$image","$archive/$date/$datetime-image.jpg");
+    #process this first run of each day
+    unless (-d $date) {
+        my $dir = $date;
+        mkdir ($dir) or die "can't create directory";
+          
+    }
+    
+    # archive latest image
+    copy("$image","$archive/$dir/$datetime-image.jpg");
 
 
-# ftp my image to WU
-if ($ftp) {
-   if ($debug) {print "Start FTP \n"};
-   my $f = Net::FTP->new($host) or die "Can't open $host\n";
+    # ftp my image to WU
+    if ($ftp) {
+        if ($debug) {print "Start FTP \n"};
+        my $f = Net::FTP->new($host) or die "Can't open $host\n";
+        $f->login($user, $pass) ;
+        if ($debug) {print $f,"\n"};
+        $f->binary();
+        $f->put($image); #or die "Cant put file\n";
+    }
 
-   $f->login($user, $pass) ;
-   if ($debug) {print $f,"\n"};
-   $f->binary();
-   $f->put($image); #or die "Cant put file\n";
-}
-
-# sleep until next capture
-if ($debug == 1) {print "Sleep for 60 seconds \n"};
-sleep($interval-5);
+    # sleep until next capture
+    if ($debug == 1) {print "Sleep for 60 seconds \n"};
+    sleep($interval-5);
 
 }
