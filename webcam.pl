@@ -7,14 +7,11 @@ use POSIX qw(strftime);
 use File::Copy;
 
 # FTP variables
-my $ftp = 1;
 my $host = "52.36.136.128";
-my $pwfile = 'passw.txt';
-#my @credentials;
-
+my ($user,$password) = @ARGV;
 
 # fswebcam options
-my $controls = '--set saturation=120 --set brightness=10 --set sharpness=10 ';
+my $controls = '--set saturation=100 --set brightness=10 --set sharpness=10 ';
 my $image = '/var/www/html/webcam/image.jpg';
 my $title = '--title "Millidgeville, NB"';
 my $subtitle = '--subtitle "Weather Station ID: ISAINT148"';
@@ -24,66 +21,42 @@ my $capture = "fswebcam -q --top-banner $controls $title $subtitle $info $resolu
 
 # other variables
 my $interval = 60;
-my $continuous = 0;
-my $debug = 1;
+my $run = 1;
+my $debug = 0;
 my $archive = '/var/www/html/webcamarchive';
+
+
 my $date = strftime "%Y-%m-%d", localtime;
 my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
 
+while ($run = 1) {
 
-# start to do stuff
-# read password file into array
-open(FILE, $pwfile) or die("Unable to open $pwfile file");
-chomp (my @credentials = <FILE>);
-close(FILE);
-my $user = "$credentials[0]";
-my $pass = "$credentials[1]";
-if ($debug) {
-    print "$user\n";
-    print "$pass\n";
-    print "$user-is the username\n";
-    print "$pass-is the password\n";
+
+# capture image using fswebcam
+if ($debug == 1) {print $capture,"\n"};
+system("$capture");
+
+sleep(5);
+
+# archive files
+my $date = strftime "%Y-%m-%d", localtime;
+my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+
+chdir ($archive);
+unless (-d $date) {
+mkdir ($date) or die "can't create directory";
 }
-
-# the real work starts here.  Loop every minute to capture image
-while ($continuous == 1) {
+copy("$image","$archive/$date/$datetime-image.jpg");
 
 
-    # capture image using fswebcam
-    if ($debug == 1) {print $capture,"\n"};
-    system("$capture");
+# ftp my image to WU
+if ($debug == 1) {print "Start FTP \n"};
+my $f = Net::FTP->new($host) or die "Can't open $host\n";
+$f->login($user, $password) or die "Can't log $user in\n";
+$f->binary();
+$f->put($image) or die "Can't put file";
 
-    sleep(5);
-
-    # archive files
-    my $date = strftime "%Y-%m-%d", localtime;
-    my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
-    chdir ($archive);
-    
-
-    #process this first run of each day
-    unless (-d $date) {
-        my $dir = $date;
-        mkdir ($dir) or die "can't create directory";
-          
-    }
-    
-    # archive latest image
-    copy("$image","$archive/$dir/$datetime-image.jpg");
-
-
-    # ftp my image to WU
-    if ($ftp) {
-        if ($debug) {print "Start FTP \n"};
-        my $f = Net::FTP->new($host) or die "Can't open $host\n";
-        $f->login($user, $pass) ;
-        if ($debug) {print $f,"\n"};
-        $f->binary();
-        $f->put($image); #or die "Cant put file\n";
-    }
-
-    # sleep until next capture
-    if ($debug == 1) {print "Sleep for 60 seconds \n"};
-    sleep($interval-5);
+if ($debug == 1) {print "Sleep for 60 seconds \n"};
+sleep($interval-5);
 
 }
