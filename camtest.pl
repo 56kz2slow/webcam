@@ -7,7 +7,7 @@ use File::Copy;
 
 # misc variables
 my $interval = 60;
-my $continuous = 0;
+my $continuous = 1;
 my $debug = 1;
 my $date = strftime "%Y-%m-%d", localtime;
 my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
@@ -22,29 +22,17 @@ my $dir = $date;
 my $ftp = 1;
 my $host = "52.36.136.128";
 my $pwfile = 'passw.txt';  #password file should have CamID on 1st line, key on 2nd line
+my ($user, $pass) = @ARGV;
+
 
 # fswebcam options
-my $options = '-q --top-banner -r 640x480';
+my $option = '-q --top-banner -r 640x480';
 my $controls = '--set saturation=120 --set brightness=10 --set sharpness=10 ';
 my $title = '--title "Millidgeville, NB"';
 my $subtitle = '--subtitle "Weather Station ID: ISAINT148"';
 my $info = '--info "Powered by Raspberry Pi"';
 my $image = "$webhome/webcam/image.jpg";
-my $capture = "fswebcam $options $controls $title $subtitle $info $image";
-
-# start to do stuff
-# read password file into array
-open(FILE, $pwfile) or die("Unable to open $pwfile file");
-chomp (my @credentials = <FILE>);
-close(FILE);
-my $user = "$credentials[0]";
-my $pass = "$credentials[1]";
-if ($debug) {
-    print "$user\n";
-    print "$pass\n";
-    print "$user-is the username\n";
-    print "$pass-is the password\n";
-}
+my $capture = "fswebcam $option $controls $title $subtitle $info $image";
 
 # the real work starts here.  Loop every minute to capture image
 while ($continuous == 1) {
@@ -75,9 +63,18 @@ while ($continuous == 1) {
 
     # ftp my image to WU
     if ($ftp) {
-        if ($debug) {print "Start FTP \n"};
-        my $f = Net::FTP->new($host) or die "Can't open $host\n";
-        if ($debug) {print $f,"Connect\n"}; 
+
+        if ($debug) {
+            print "Start FTP \n";
+        }
+        my $f = Net::FTP->new($host, Debug => 3) or die "Can't open $host\n";
+       
+        if ($debug) {
+            print $f,"Connect\n";
+            print "$user.\n";
+            print "$pass.\n";
+        }
+
         $f->login($user, $pass) ;
         if ($debug) {print $f,"Login\n"};
         $f->binary();
