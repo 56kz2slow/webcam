@@ -6,29 +6,34 @@ use Net::FTP;
 use POSIX qw(strftime);
 use File::Copy;
 
+# misc variables
+my $interval = 60;
+my $continuous = 0;
+my $debug = 1;
+my $date = strftime "%Y-%m-%d", localtime;
+my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+my $webhome = '/var/www/html';
+my $archive = "$webhome/webcamarchive";
+my $timelapse = "$webhome/timelaspse";
+
+
 # FTP variables
 my $ftp = 1;
 my $host = "52.36.136.128";
-my $pwfile = 'passw.txt';
+my $pwfile = 'passw.txt';  #password file should have CamID on 1st line, key on 2nd line
 #my @credentials;
 
 
 # fswebcam options
+my $options = '-q --top-banner -r 640x480';
 my $controls = '--set saturation=120 --set brightness=10 --set sharpness=10 ';
-my $image = '/var/www/html/webcam/image.jpg';
 my $title = '--title "Millidgeville, NB"';
 my $subtitle = '--subtitle "Weather Station ID: ISAINT148"';
 my $info = '--info "Powered by Raspberry Pi"';
-my $resolution = '-r 640x480';
-my $capture = "fswebcam -q --top-banner $controls $title $subtitle $info $resolution $image";
+my $image = "$webhome/webcam/image.jpg";
+my $capture = "fswebcam $options $controls $title $subtitle $info $image";
 
-# other variables
-my $interval = 60;
-my $run = 0;
-my $debug = 1;
-my $archive = '/var/www/html/webcamarchive';
-my $date = strftime "%Y-%m-%d", localtime;
-my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+
 
 
 # start to do stuff
@@ -46,39 +51,45 @@ if ($debug) {
 }
 
 # the real work starts here.  Loop every minute to capture image
-while ($run = 1) {
+while ($continuous == 1) {
 
 
-# capture image using fswebcam
-if ($debug == 1) {print $capture,"\n"};
-system("$capture");
+    # capture image using fswebcam
+    if ($debug == 1) {print $capture,"\n"};
+    system("$capture");
 
-sleep(5);
+    sleep(5);
 
-# archive files
-my $date = strftime "%Y-%m-%d", localtime;
-my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+    # archive files
+    my $date = strftime "%Y-%m-%d", localtime;
+    my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+    chdir ($archive);
+    
 
-chdir ($archive);
-unless (-d $date) {
-mkdir ($date) or die "can't create directory";
-}
-copy("$image","$archive/$date/$datetime-image.jpg");
+    #process this first run of each day
+    unless (-d $date) {
+        #create time lapse in $dir
+        my $dir = $date;
+        mkdir ($dir) or die "can't create directory";
+          
+    }
+    
+    # archive latest image
+    copy("$image","$archive/$dir/$datetime-image.jpg");
 
 
-# ftp my image to WU
-if ($ftp) {
-   if ($debug) {print "Start FTP \n"};
-   my $f = Net::FTP->new($host) or die "Can't open $host\n";
+    # ftp my image to WU
+    if ($ftp) {
+        if ($debug) {print "Start FTP \n"};
+        my $f = Net::FTP->new($host) or die "Can't open $host\n";
+        $f->login($user, $pass) ;
+        if ($debug) {print $f,"\n"};
+        $f->binary();
+        $f->put($image); #or die "Cant put file\n";
+    }
 
-   $f->login($user, $pass) ;
-   if ($debug) {print $f,"\n"};
-   $f->binary();
-   $f->put($image) or die "Cant put file\n";
-}
-
-# sleep until next capture
-if ($debug == 1) {print "Sleep for 60 seconds \n"};
-sleep($interval-5);
+    # sleep until next capture
+    if ($debug == 1) {print "Sleep for 60 seconds \n"};
+    sleep($interval-5);
 
 }
