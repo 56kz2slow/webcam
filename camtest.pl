@@ -2,7 +2,6 @@
 
 use strict;           # Don't forget !
 use Net::FTP;
-
 use POSIX qw(strftime);
 use File::Copy;
 
@@ -15,14 +14,14 @@ my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
 my $webhome = '/var/www/html';
 my $archive = "$webhome/webcamarchive";
 my $timelapse = "$webhome/timelaspse";
-
+my $date = strftime "%Y-%m-%d", localtime;
+my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+my $dir = $date;
 
 # FTP variables
 my $ftp = 1;
 my $host = "52.36.136.128";
 my $pwfile = 'passw.txt';  #password file should have CamID on 1st line, key on 2nd line
-#my @credentials;
-
 
 # fswebcam options
 my $options = '-q --top-banner -r 640x480';
@@ -32,9 +31,6 @@ my $subtitle = '--subtitle "Weather Station ID: ISAINT148"';
 my $info = '--info "Powered by Raspberry Pi"';
 my $image = "$webhome/webcam/image.jpg";
 my $capture = "fswebcam $options $controls $title $subtitle $info $image";
-
-
-
 
 # start to do stuff
 # read password file into array
@@ -53,22 +49,22 @@ if ($debug) {
 # the real work starts here.  Loop every minute to capture image
 while ($continuous == 1) {
 
-
     # capture image using fswebcam
     if ($debug == 1) {print $capture,"\n"};
     system("$capture");
 
     sleep(5);
 
-    # archive files
+    # set date/time stamp variables for file and directory names
     my $date = strftime "%Y-%m-%d", localtime;
     my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
     chdir ($archive);
     
-
     #process this first run of each day
     unless (-d $date) {
         #create time lapse in $dir
+
+        #change $dir to today's date and create today's directory
         my $dir = $date;
         mkdir ($dir) or die "can't create directory";
           
@@ -77,15 +73,17 @@ while ($continuous == 1) {
     # archive latest image
     copy("$image","$archive/$dir/$datetime-image.jpg");
 
-
     # ftp my image to WU
     if ($ftp) {
         if ($debug) {print "Start FTP \n"};
         my $f = Net::FTP->new($host) or die "Can't open $host\n";
+        if ($debug) {print $f,"Connect\n"}; 
         $f->login($user, $pass) ;
-        if ($debug) {print $f,"\n"};
+        if ($debug) {print $f,"Login\n"};
         $f->binary();
+        if ($debug) {print $f,"Binary\n"};
         $f->put($image); #or die "Cant put file\n";
+        if ($debug) {print $f,"Put\n"};
     }
 
     # sleep until next capture
