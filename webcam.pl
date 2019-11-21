@@ -24,7 +24,7 @@ my $capture = "fswebcam -q --top-banner $controls $title $subtitle $info $resolu
 
 # other variables
 my $interval = 60;
-my $run = 0;
+my $continuous = 1;
 my $debug = 1;
 my $archive = '/var/www/html/webcamarchive';
 my $date = strftime "%Y-%m-%d", localtime;
@@ -46,7 +46,7 @@ if ($debug) {
 }
 
 # the real work starts here.  Loop every minute to capture image
-while ($run = 1) {
+while ($continuous = 1) {
 
 
 # capture image using fswebcam
@@ -74,7 +74,7 @@ if ($ftp) {
    $f->login($user, $pass) ;
    if ($debug) {print $f,"\n"};
    $f->binary();
-   $f->put($image) or die "Cant put file\n";
+   $f->put($image); #or die "Cant put file\n";
 }
 
 # sleep until next capture
