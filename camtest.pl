@@ -4,6 +4,7 @@ use strict;           # Don't forget !
 use Net::FTP;
 use POSIX qw(strftime);
 use File::Copy;
+use Cwd qw(getcwd);
 
 # misc variables
 my $interval = 60;
@@ -11,12 +12,17 @@ my $continuous = 1;
 my $debug = 1;
 my $date = strftime "%Y-%m-%d", localtime;
 my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+my $yesterday = strftime "%Y-%m-%d", localtime(time - 23*3600);
 my $webhome = '/var/www/html';
 my $archive = "$webhome/webcamarchive";
-my $timelapse = "$webhome/timelaspse";
-my $date = strftime "%Y-%m-%d", localtime;
-my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
-my $dir = $date;
+my $timelapse = "$webhome/timelapse";
+my $timelapsesource = "$archive/$yesterday";
+my $timelapselist = "$timelapsesource/stills.txt";
+my $timelapsecmd = "ffmpeg -f concat -safe 0 -i '$timelapselist' -vcodec libx264 $timelapse/$yesterday-lapse.mp4";
+my @files;
+my $files;
+
+
 
 # FTP variables
 my $ftp = 1;
@@ -34,36 +40,75 @@ my $info = '--info "Powered by Raspberry Pi"';
 my $image = "$webhome/webcam/image.jpg";
 my $capture = "fswebcam $option $controls $title $subtitle $info $image";
 
+
+
+
+
+
+
+
 # the real work starts here.  Loop every minute to capture image
 while ($continuous == 1) {
 
     # capture image using fswebcam
-    if ($debug == 1) {print "\n Start loop. \n =================\n $capture \n"};
+    if ($debug == 1) {print "\n Start loop. \n =================\n $capture \n\n"};
     system("$capture");
 
-    sleep(5);
+    #sleep(5);
 
     # set date/time stamp variables for file and directory names
     my $date = strftime "%Y-%m-%d", localtime;
     my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+    my $yesterday = strftime "%Y-%m-%d", localtime(time - 23*3600);
     chdir ($archive);
+
+    if ($debug) {print "My date is$date\n"};
+    if ($debug) {print "My datetime is $datetime\n\n"};
+    if ($debug) {print "Yesterday is $yesterday\n\n"};
+    
+    my $current = getcwd;
+    if ($debug) {print "My cwd is $current\n\n"};
     
     #process this first run of each day
     unless (-d $date) {
-        #create time lapse in $dir
-        chdir ($archive/$dir);
-        my $timelapsecmd = "/home/pi/timelapse.bsh $timelapse/$dir-lapse.mp4";
-        if ($debug) {print $timelapsecmd,"\n"};
+        if ($debug) {print "Entering new day\n"};
+        #create time lapse in $Yesterday
+        my $timelapsesource = "$archive/$yesterday";
+        my $timelapselist = "$timelapsesource/stills.txt";
+        
+        if ($debug) {print "\nMy timelapse source is: $timelapsesource\n"};
+        if ($debug) {print "My file list is $timelapselist\n\n"};
+       
+       unless(open FILE, '>'.$timelapselist) {
+            # Die with error message 
+            # if we can't open it.
+            die "\nUnable to create $timelapselist\n";
+        }
+
+        opendir (DIR, $timelapsesource) or die $!;
+        my @files = grep (/\.jpg$/,readdir(DIR));
+        foreach $files (@files) {
+        print FILE "file './$files'\n";
+        }
+        close FILE;
+
+        if ($debug) {
+            my $current = getcwd;
+            print "Current directory is $current\n\n";
+        }
+        
+        if ($debug) {print "=====================\n Timelapse command is:\n $timelapsecmd \n\n"};
         system($timelapsecmd);
-        #change $dir to today's date and create today's directory
-        my $dir = $date;
-        mkdir ($dir) or die "can't create directory";
-          
+        
+        #change $Yesterday to today's date and create today's directory
+        chdir ($archive/$date);
+        mkdir ($date) or die "can't create directory";
+        if ($debug) {print "My dir is: $date\n"};  
     }
     
     # archive latest image
-    copy("$image","$archive/$dir/$datetime-image.jpg");
-    if ($debug) {print "copying $image to $archive/$dir/$datetime-image.jpg\n"};
+    copy("$image","$archive/$date/$datetime-image.jpg");
+    if ($debug) {print "copying $image to $archive/$date/$datetime-image.jpg\n"};
 
     # ftp my image to WU
     if ($ftp) {
