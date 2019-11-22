@@ -38,7 +38,7 @@ my $capture = "fswebcam $option $controls $title $subtitle $info $image";
 while ($continuous == 1) {
 
     # capture image using fswebcam
-    if ($debug == 1) {print $capture,"\n"};
+    if ($debug == 1) {print "\n Start loop. \n =================\n $capture \n"};
     system("$capture");
 
     sleep(5);
@@ -51,7 +51,10 @@ while ($continuous == 1) {
     #process this first run of each day
     unless (-d $date) {
         #create time lapse in $dir
-
+        chdir ($archive/$dir);
+        my $timelapsecmd = "/home/pi/timelapse.bsh $timelapse/$dir-lapse.mp4";
+        if ($debug) {print $timelapsecmd,"\n"};
+        system($timelapsecmd);
         #change $dir to today's date and create today's directory
         my $dir = $date;
         mkdir ($dir) or die "can't create directory";
@@ -60,6 +63,7 @@ while ($continuous == 1) {
     
     # archive latest image
     copy("$image","$archive/$dir/$datetime-image.jpg");
+    if ($debug) {print "copying $image to $archive/$dir/$datetime-image.jpg\n"};
 
     # ftp my image to WU
     if ($ftp) {
@@ -67,7 +71,7 @@ while ($continuous == 1) {
         if ($debug) {
             print "Start FTP \n";
         }
-        my $f = Net::FTP->new($host, Debug => 3) or die "Can't open $host\n";
+        my $f = Net::FTP->new($host) or die "Can't open $host\n";
        
         if ($debug) {
             print $f,"Connect\n";
