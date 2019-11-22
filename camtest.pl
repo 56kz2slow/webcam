@@ -86,7 +86,8 @@ while ($continuous == 1) {
         }
 
         opendir (DIR, $timelapsesource) or die $!;
-        my @files = grep (/\.jpg$/,readdir(DIR));
+        my @listing = grep (/\.jpg$/,readdir(DIR));
+        my @files = sort @listing;
         foreach $files (@files) {
         print FILE "file './$files'\n";
         }
