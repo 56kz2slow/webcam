@@ -6,29 +6,28 @@ use POSIX qw(strftime);
 use File::Copy;
 use Cwd qw(getcwd);
 
+
+
 # misc variables
-my $interval = 60;
+my $interval = 30;
 my $continuous = 1;
 my $debug = 0;
 my $date = strftime "%Y-%m-%d", localtime;
 my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
 my $yesterday = strftime "%Y-%m-%d", localtime(time - 23*3600);
 my $webhome = '/var/www/html';
-my $archive = "$webhome/webcamarchive";
-my $timelapse = "$webhome/timelapse";
-my $timelapsesource = "$archive/$yesterday";
-my $timelapselist = "$timelapsesource/stills.txt";
-my $timelapsecmd = "ffmpeg -f concat -safe 0 -i '$timelapselist' -vcodec libx264 $timelapse/$yesterday-lapse.mp4";
-my @files;
-my $files;
+my $archive = "/web/cam-archive";
+
 
 
 
 # FTP variables
-my $ftp = 1;
+my $ftpwu = 1;
 my $host = "52.36.136.128";
 my $pwfile = 'passw.txt';  #password file should have CamID on 1st line, key on 2nd line
 my ($user, $pass) = @ARGV;
+
+
 
 
 # fswebcam options
@@ -42,7 +41,7 @@ my $capture = "fswebcam $option $controls $title $subtitle $info $image";
 
 
 
-
+my $today = strftime "%Y-%m-%d", localtime;
 
 
 
@@ -60,59 +59,47 @@ while ($continuous == 1) {
     my $date = strftime "%Y-%m-%d", localtime;
     my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
     my $yesterday = strftime "%Y-%m-%d", localtime(time - 23*3600);
+    
     chdir ($archive);
 
-    if ($debug) {print "My date is$date\n"};
-    if ($debug) {print "My datetime is $datetime\n\n"};
-    if ($debug) {print "Yesterday is $yesterday\n\n"};
-    
-    my $current = getcwd;
-    if ($debug) {print "My cwd is $current\n\n"};
+    if ($debug) {
+        print "My date is$date\n";
+        print "My datetime is $datetime\n\n";
+        print "Yesterday is $yesterday\n\n";
+        my $current = getcwd;
+        print "My cwd is $current\n\n";
+    }
     
     #process this first run of each day
     unless (-d $date) {
         if ($debug) {print "Entering new day\n"};
-        #create time lapse in $Yesterday
-        my $timelapsesource = "$archive/$yesterday";
-        my $timelapselist = "$timelapsesource/stills.txt";
-        
-        if ($debug) {print "\nMy timelapse source is: $timelapsesource\n"};
-        if ($debug) {print "My file list is $timelapselist\n\n"};
-       
-       unless(open FILE, '>'.$timelapselist) {
-            # Die with error message 
-            # if we can't open it.
-            die "\nUnable to create $timelapselist\n";
-        }
-
-        opendir (DIR, $timelapsesource) or die $!;
-        my @listing = grep (/\.jpg$/,readdir(DIR));
-        my @files = sort @listing;
-        foreach $files (@files) {
-        print FILE "file './$files'\n";
-        }
-        close FILE;
-
-        if ($debug) {
-            my $current = getcwd;
-            print "Current directory is $current\n\n";
-        }
-        
-        if ($debug) {print "=====================\n Timelapse command is:\n $timelapsecmd \n\n"};
-        system($timelapsecmd);
         
         #change $Yesterday to today's date and create today's directory
-        chdir ($archive/$date);
+        chdir ($archive);
+        if ($debug) {
+            print "My dir is: $date\n";
+            my $current = getcwd;
+            print "My cwd is $current\n\n"; 
+        } 
         mkdir ($date) or die "can't create directory";
-        if ($debug) {print "My dir is: $date\n"};  
+        
     }
     
     # archive latest image
     copy("$image","$archive/$date/$datetime-image.jpg");
+    copy("$image","$archive/image.jpg");
+    if ($debug) {print "copying $image to $archive/$date/$datetime-image.jpg\n"};
+    if ($debug == 1) {print "Sleep for $interval seconds \n"};
+    sleep($interval);
+    
+    system("$capture");
+    my $datetime = strftime "%Y-%m-%d_%Hh%M-%S", localtime;
+    copy("$image","$archive/$date/$datetime-image.jpg");
+    copy("$image","$archive/image.jpg");
     if ($debug) {print "copying $image to $archive/$date/$datetime-image.jpg\n"};
 
     # ftp my image to WU
-    if ($ftp) {
+    if ($ftpwu) {
 
         if ($debug) {
             print "Start FTP \n";
@@ -134,7 +121,7 @@ while ($continuous == 1) {
     }
 
     # sleep until next capture
-    if ($debug == 1) {print "Sleep for 60 seconds \n"};
-    sleep($interval-5);
+    if ($debug == 1) {print "Sleep for $interval seconds \n"};
+    sleep($interval);
 
 }
