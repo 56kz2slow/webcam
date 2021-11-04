@@ -14,5 +14,16 @@ body:
       label: Chart Title
       description: Enter a descriptive chart title
       placeholder: ex. Disk Read Response Time by Interval
-    validations:
+    v alidations:
       required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Client
+        - Processes
+        - Resources
+        - Storage Pools
+        - Workload
