@@ -30,24 +30,11 @@ body:
         - Workload
     validations:
       required: true
-
   - type: dropdown
     id: type
     attributes:
       label: Chart Type
-      description: Select the Chart Type
-      multiple: false
-      options:
-        - Client
-        - Processes
-        - Resources
-        - Storage Pools
-        - Workload
-  - type: dropdown
-    id: category
-    attributes:
-      label: Category Name
-      description: Select the Index Category Name this chart belongs to.
+      description: Select the Chart Type to create
       multiple: false
       options:
         - Area
@@ -60,6 +47,4 @@ body:
         - Pie
     validations:
       required: true
-        - Workload
-    validations:
-      required: true
+       
