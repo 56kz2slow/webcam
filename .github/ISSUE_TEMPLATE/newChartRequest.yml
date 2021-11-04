@@ -14,7 +14,7 @@ body:
       label: Chart Title
       description: Enter a descriptive chart title
       placeholder: ex. Disk Read Response Time by Interval
-      validations:
+    validations:
       required: true
   - type: dropdown
     id: browsers
@@ -27,3 +27,5 @@ body:
         - Resources
         - Storage Pools
         - Workload
+    validations:
+      required: true
