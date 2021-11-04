@@ -20,13 +20,46 @@ body:
     id: category
     attributes:
       label: Category Name
-      description: Enter the Index Category Name this chart belongs to.
+      description: Select the Index Category Name this chart belongs to.
       multiple: false
       options:
         - Client
         - Processes
         - Resources
         - Storage Pools
+        - Workload
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Chart Type
+      description: Select the Chart Type
+      multiple: false
+      options:
+        - Client
+        - Processes
+        - Resources
+        - Storage Pools
+        - Workload
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category Name
+      description: Select the Index Category Name this chart belongs to.
+      multiple: false
+      options:
+        - Area
+        - Bar (horizontal)
+        - Stacked Bar (horizontal)
+        - Columns (vertical)
+        - Stacked Columns (vertical)
+        - Line
+        - Scatter
+        - Pie
+    validations:
+      required: true
         - Workload
     validations:
       required: true
