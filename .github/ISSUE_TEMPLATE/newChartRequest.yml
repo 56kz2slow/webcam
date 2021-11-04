@@ -11,8 +11,8 @@ body:
   - type: input
     id: title
     attributes:
-     label: Chart Title:
-     description: Enter a descriptive chart title
-     placeholder: ex. Disk Read Response Time by Interval
+      label: Chart Title:
+      description: Enter a descriptive chart title
+      placeholder: ex. Disk Read Response Time by Interval
     validations:
       required: true
