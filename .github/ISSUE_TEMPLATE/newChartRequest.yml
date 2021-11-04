@@ -1,4 +1,4 @@
-name: New Chart1
+name: New Chart
 description: New Chart Request Form
 title: "[Chart]: "
 labels: ["chart"]
@@ -8,11 +8,11 @@ body:
     attributes:
       value: |
         Thanks for taking the time to request a new chart!
- - type: input
-  id: title
-  attributes:
-    label: Chart Title:
-    description: Enter a descriptive chart title
-    placeholder: ex. Disk Read Response Time by Interval
-  validations:
-    required: true
+  - type: input
+    id: title
+    attributes:
+     label: Chart Title:
+     description: Enter a descriptive chart title
+     placeholder: ex. Disk Read Response Time by Interval
+    validations:
+      required: true
