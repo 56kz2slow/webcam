@@ -2,8 +2,7 @@ name: New Chart
 description: New Chart Request Form
 title: "[Chart]: "
 labels: ["chart"]
-assignees:
- 
+
 body:
   - type: markdown
     attributes:
