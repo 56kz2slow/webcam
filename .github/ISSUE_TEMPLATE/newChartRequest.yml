@@ -17,9 +17,10 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: browsers
+    id: category
     attributes:
-      label: What browsers are you seeing the problem on?
+      label: Category Name
+      description: Enter the Index Category Name this chart belongs to.
       multiple: false
       options:
         - Client
