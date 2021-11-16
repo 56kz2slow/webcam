@@ -63,3 +63,45 @@ body:
       
     validations:
       required: true
+
+# Chart Screenshot
+  
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Paste a sample screenshot of the chart here.
+      placeholder: "Paste a sample screenshot of the chart here."
+      
+    validations:
+      required: true
+  
+  
+    # X-axis
+  - type: input
+    id: xaxis-label
+    attributes:
+      label: X-axis label
+      description: X-axis label name (enter NONE if not needed)
+      placeholder: X-axis label name (enter NONE if not needed)
+    validations:
+      required: true
+# Y-axis      
+   - type: input
+    id: yaxis-label
+    attributes:
+      label: y-axis label
+      description: Y-axis label name (enter NONE if not needed)
+      placeholder: Y-axis label name (enter NONE if not needed). This can be the unit of measure, example: milliseconds, GB/sec, seconds, etc.
+    validations:
+      required: true
+      
+# Number of decimals.
+   - type: input
+    id: decimal
+    attributes:
+      label: decimal
+      description: Enter the number of decimal places. 0 for large numbers, 3 if seconds from instrumentation.
+      placeholder:Enter the number of decimal places.
+    validations:
+      required: true
