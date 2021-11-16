@@ -64,7 +64,7 @@ body:
     validations:
       required: true
 
-# Chart Screenshot
+  # Chart Screenshot
   
   - type: textarea
     id: screenshot
@@ -77,7 +77,7 @@ body:
       required: true
   
   
-    # X-axis
+  # X-axis
   - type: input
     id: xaxis-label
     attributes:
@@ -86,8 +86,8 @@ body:
       placeholder: X-axis label name (enter NONE if not needed)
     validations:
       required: true
-# Y-axis      
-   - type: input
+  # Y-axis      
+  - type: input
     id: yaxis-label
     attributes:
       label: y-axis label
@@ -97,7 +97,7 @@ body:
       required: true
       
 # Number of decimals.
-   - type: input
+  - type: input
     id: decimal
     attributes:
       label: decimal
