@@ -92,7 +92,7 @@ body:
     attributes:
       label: y-axis label
       description: Y-axis label name (enter NONE if not needed)
-      placeholder: Y-axis label name (enter NONE if not needed). This can be the unit of measure, example: milliseconds, GB/sec, seconds, etc.
+      placeholder: "Y-axis label name (enter NONE if not needed). This can be the unit of measure, example: milliseconds, GB/sec, seconds, etc."
     validations:
       required: true
       
