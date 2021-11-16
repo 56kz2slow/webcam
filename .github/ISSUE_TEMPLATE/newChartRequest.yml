@@ -102,6 +102,6 @@ body:
     attributes:
       label: decimal
       description: Enter the number of decimal places. 0 for large numbers, 3 if seconds from instrumentation.
-      placeholder:Enter the number of decimal places.
+      placeholder: Enter the number of decimal places.
     validations:
       required: true
