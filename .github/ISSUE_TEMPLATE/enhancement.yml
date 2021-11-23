@@ -11,7 +11,8 @@ body:
     attributes:
       label: Type of enhancement
       description: What type of enhancement is this?
-      placehoder: ex. Change layout of a report.
+      placehoder: ex. Change layout of a report
+      
   - type: textarea
     id: Description
     attributes:
