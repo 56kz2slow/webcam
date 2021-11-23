@@ -34,7 +34,7 @@ body:
       required: true
   
   # ExcelSheet
-  - type: text
+  - type: input
     id: ExcelSheet
     attributes:
       label: Excel Sheet Name
@@ -45,7 +45,7 @@ body:
       required: true
   
   # HTML filename
-  - type: text
+  - type: input
     id: htmlFilename
     attributes:
       label: HTML Filename
