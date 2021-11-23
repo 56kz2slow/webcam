@@ -6,9 +6,8 @@ assignees:
 body:
   - type: markdown
     attributes:
-      value: |
-        Thanks for taking to submit and enhancement request. If this is for a new graph, use the "New Chart Request Form" instead.
-  - type: input:
+      value: Thanks for taking to submit and enhancement request. If this is for a new graph, use the "New Chart Request Form" instead.
+  - type: input
     id: type
     attributes:
       label: Type of enhancement:
