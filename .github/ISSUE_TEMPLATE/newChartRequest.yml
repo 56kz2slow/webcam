@@ -13,10 +13,23 @@ body:
     id: title
     attributes:
       label: Graph Title
-      description: Enter a descriptive chart title
-      placeholder: ex. Disk Read Response Time by Interval
+      description: Enter a descriptive chart title. Use %s in the title to represent a variable that will change for when there's multiple graphs of the same type.
+      placeholder: ex. %s Disk Read Response Time by Interval
     validations:
       required: true
+      
+  # titleVariable
+  - type: input
+    id: titleVariable
+    attributes:
+      label: Title Variable
+      description: Enter a what %s represents in the Graph Title if applicable, it should be one of the values returned by the SQL query.
+      placeholder: diskUype  
+    validations:
+      required: true
+      
+      
+      
   # Category
   - type: dropdown
     id: category
@@ -98,22 +111,30 @@ body:
     validations:
       required: true
 
-  # SQL
+  # SQL1
   - type: textarea
     id: sql
     attributes:
-      label: SQL
-      description: Enter a detailed chart description and explanation on values.
-      placeholder: "This chart shows the average latency or response for the I/O operations related to a specific set of disks (database, logs, storage pools, etc.) by interval. The purpose is to show how quickly the I/O subsystem is completing I/O requests. The chart shows the average response time by interval. The purpose of this chart is to identify how the disks are performing over time. For database and active log disks that should be an SSD, the response time should be below 5 milliseconds, ideally under 3 milliseconds. For archive logs and storage pool disks, that are normally on hard disks, the response time should be below 10 milliseconds."
+      label: Primary SQL
+      description: Enter the SQL query used to create this graph. If 2 queries are required, one to get a list, and a second to generate 1 graph for each item in the list, enter the first query for the list here and the second below.
       render: markdown
     validations:
       required: true
+      
+  # SQL2
+  - type: textarea
+    id: sql2
+    attributes:
+      label: Second SQL (optional
+      description: If this graph requires 2 SQL queries, enter the 2nd one here.
+      render: markdown
+    
   
   # Y-axis      
   - type: input
     id: yaxis-label
     attributes:
-      label: y-axis label
+      label: Y-axis label
       description: Y-axis label name (enter NONE if not needed)
       placeholder: "Y-axis label name (enter NONE if not needed). This can be the unit of measure, example: milliseconds, GB/sec, seconds, etc."
     validations:
