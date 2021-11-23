@@ -7,15 +7,15 @@ assignees:
 body:
   - type: markdown
     attributes:
-      value: |
-        Thanks for taking the time to fill out this bug report!
+      value:  Thanks for taking the time to fill out this bug report!
   - type: dropdown
     id: category
-    label: With what function is the issue?
-    options:
-      - Running command line
-      - Running web version
-      - A graph
+    attributes:
+      label: With what function is the issue?
+      options:
+        - Running command line
+        - Running web version
+        - A graph
     validations:
       required: true
   
