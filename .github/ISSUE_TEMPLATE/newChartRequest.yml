@@ -24,7 +24,7 @@ body:
     attributes:
       label: Title Variable
       description: Enter a what %s represents in the Graph Title if applicable, it should be one of the values returned by the SQL query.
-      placeholder: diskUype  
+      placeholder: diskUse  
     validations:
       required: true
       
