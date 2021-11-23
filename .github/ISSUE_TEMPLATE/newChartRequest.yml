@@ -78,7 +78,7 @@ body:
 
 
   # SQL
-    type: textarea
+  - type: textarea
     id: sql
     attributes:
       label: SQL
