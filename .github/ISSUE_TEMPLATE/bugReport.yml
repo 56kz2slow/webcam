@@ -1,5 +1,5 @@
 name: Bug Report
-description: File a bug report
+description: Report a problem with PSA.
 title: "[PROBLEM]: "
 labels: ["problem", "triage"]
 body:
