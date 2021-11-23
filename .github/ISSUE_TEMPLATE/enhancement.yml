@@ -1,0 +1,27 @@
+name: Enhancement Request
+description: Enhancement Request
+title: "[Enhancement]: "
+labels: ["enhancement", "triage"]
+assignees:
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking to submit and enhancement request. If this is for a new graph, use the "New Chart Request Form" instead.
+  - type: input:
+    id: type
+    attributes:
+      label: Type of enhancement:
+      description: What type of enhancement is this?
+      placehoder: ex. Change layout of a report.
+  - type: textarea
+    id: Description
+    attributes:
+      label: Details about the enhancements
+      description: Give a detailed description of the enhancement.
+      placeholder: 
+      value: "Enhancement details"
+    validations:
+      required: true
+   
+  
