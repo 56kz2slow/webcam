@@ -12,7 +12,7 @@ body:
   - type: input
     id: title
     attributes:
-      label: Chart Title
+      label: Graph Title
       description: Enter a descriptive chart title
       placeholder: ex. Disk Read Response Time by Interval
     validations:
@@ -73,6 +73,18 @@ body:
       description: Paste a sample screenshot of the chart here.
       placeholder: "Paste a sample screenshot of the chart here."
       
+    validations:
+      required: true
+
+
+  # SQL
+    type: textarea
+    id: sql
+    attributes:
+      label: SQL
+      description: Enter a detailed chart description and explanation on values.
+      placeholder: "This chart shows the average latency or response for the I/O operations related to a specific set of disks (database, logs, storage pools, etc.) by interval. The purpose is to show how quickly the I/O subsystem is completing I/O requests. The chart shows the average response time by interval. The purpose of this chart is to identify how the disks are performing over time. For database and active log disks that should be an SSD, the response time should be below 5 milliseconds, ideally under 3 milliseconds. For archive logs and storage pool disks, that are normally on hard disks, the response time should be below 10 milliseconds."
+    render: markdown
     validations:
       required: true
   
