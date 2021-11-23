@@ -34,23 +34,23 @@ body:
       required: true
   
   # ExcelSheet
-  - type: ExcelSheet
+  - type: text
     id: ExcelSheet
     attributes:
       label: Excel Sheet Name
       description: Enter the name of the Excel spreadsheet. Don't use hyphens (-), only underscores (_) if needed. 31 characters maximum
-      placeholder: Ex: INSTR_Time_Cat_I
+      placeholder: ex. INSTR_Time_Cat_I
+      characterLimit: 31
     validations:
       required: true
   
-  # ExcelSheet
-  - type: ExcelSheet
-    id: ExcelSheet
+  # HTML filename
+  - type: text
+    id: htmlFilename
     attributes:
-      label: Excel Sheet Name
-      description: Enter the name of the Excel spreadsheet. Don't use hyphens (-), only underscores (_) if needed.
-      placeholder: Ex: INSTR_Time_Cat_I
-      characterLimit: 31
+      label: HTML Filename
+      description: Enter the HTML filename, no spaces.
+      placeholder: ex. instr_time_cat.html
     validations:
       required: true
   
