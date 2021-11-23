@@ -40,7 +40,7 @@ body:
       label: Excel Sheet Name
       description: Enter the name of the Excel spreadsheet. Don't use hyphens (-), only underscores (_) if needed. 31 characters maximum
       placeholder: ex. INSTR_Time_Cat_I
-      characterLimit: 31
+      characterLimit: 25,31
     validations:
       required: true
   
