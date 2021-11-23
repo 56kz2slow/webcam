@@ -120,11 +120,18 @@ body:
       required: true
       
 # Number of decimals.
-  - type: input
+  - type: dropdown
     id: decimal
     attributes:
       label: decimal
       description: Enter the number of decimal places. 0 for large numbers, 3 if seconds from instrumentation.
-      placeholder: Enter the number of decimal places.
+      multiple: false
+      options:
+        - 0 
+        - 1
+        - 2
+        - 3 
+        - Not applicable
     validations:
       required: true
+ 
